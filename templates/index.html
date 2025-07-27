@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>local llm server</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+    #chatbox { border: 1px solid #ccc; background: white; padding: 10px; height: 400px; overflow-y: auto; }
+    .user, .ai { margin: 10px 0; }
+    .user { color: blue; }
+    .ai { color: green; }
+  </style>
+</head>
+<body>
+  <h2>AI Companion 🤖</h2>
+  <div id="chatbox"></div>
+  <input id="message" type="text" placeholder="Say something..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    async function sendMessage() {
+      const message = document.getElementById("message").value;
+      if (!message) return;
+      
+      document.getElementById("chatbox").innerHTML += `<div class="user"><b>You:</b> ${message}</div>`;
+      document.getElementById("message").value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      document.getElementById("chatbox").innerHTML += `<div class="ai"><b>AI:</b> ${data.reply}</div>`;
+      document.getElementById("chatbox").scrollTop = document.getElementById("chatbox").scrollHeight;
+    }
+  </script>
+</body>
+</html>
